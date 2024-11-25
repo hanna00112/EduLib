@@ -5,19 +5,19 @@ body {
 }
 
 .login-container {
-    padding: 20px;
+    padding: 40px;
     margin: 100px auto; /* Centers the container */
     background-color: #004d1a; /* AUI green */
     border-radius: 15px; /* Rounds the edges */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 10px 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    width: 50%;
 }
-/* Mohammad VI library text  */
+/* Welcome to Mohammad VI library text  */
 .login-header h1 {
     font-size: 1.8rem;
     margin-bottom: 10px;
-    color: #ffffff;
-    /* White text */
+    color: #ffffff;/* White text */
 }
 
 .login-header h2 {
@@ -74,6 +74,11 @@ body {
 
 .login-form button:hover {
     background-color: #005a2e; /* Slightly darker on hover */
+}
+.login-form label {
+    color: #ffffff;
+    font-style: italic;
+    font-family: "Times New Roman", Georgia, serif;
 }
 /* CSS FOR STUDENT-HOME */
 
