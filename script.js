@@ -38,7 +38,7 @@ document.querySelector(".login-form").addEventListener("submit", function(event)
         alert(`Welcome ${userType.charAt(0).toUpperCase() + userType.slice(1)}!`)
             // directing the use based on usertype
         if (userType === "student") {
-            window.location.href = "student-home.html";
+            window.location.href = "student/student-home.html";
         } else if (userType == "admin") {
             window.location.href = "admin-home.html";
         }
