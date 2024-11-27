@@ -67,8 +67,8 @@ body {
 }
 
 .login-form button {
-    width: 60%;
-    padding: 10px;
+    width: auto;
+    padding: 10px 20px;
     font-size: 1rem;
     color: #004d1a;
     background-color: #ffff; /* Darker green for button */
@@ -79,7 +79,7 @@ body {
 }
 
 .login-form button:hover {
-    background-color: #6A944B; /* Slightly darker on hover */
+    background-color: #cce5cc; /* Slightly darker on hover */
 }
 .login-form label {
     color: #ffffff;
