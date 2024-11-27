@@ -218,4 +218,67 @@ body {
     margin: 5px 0;
     font-size: 0.9rem;
   }
+
+/* CSS for ADMIN-HOME */
+
+.remove-button, .edit-button {
+    padding: 10px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.remove-button {
+    background-color: #d9534f; /* Red button for Remove */
+    color: white;
+}
+
+.edit-button {
+    background-color: #f0ad4e; /* Yellow button for Edit */
+    color: white;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #004d1a; /* Dark green background */
+    color: #fff; /* White text */
+    text-align: center;
+    padding: 20px 10px; /* Padding for spacing */
+    font-size: 0.9rem;
+    margin-top: 20px;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.footer p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* Space between text and list */
+}
+
+.footer-people {
+    list-style: none; /* Remove default list styling */
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center; /* Center-align the list */
+    flex-wrap: wrap; /* Wrap items to a new line if needed */
+    gap: 15px; /* Add spacing between list items */
+}
+
+.footer-people li {
+    display: inline; 
+}
+
+.footer-people a {
+    text-decoration: none; /* Remove underline from links */
+    color: #fff; /* White text for links */
+    transition: color 0.3s ease; 
+}
+
+.footer-people a:hover {
+    color: #cce5cc; /* Light green on hover */
+}
+
   
