@@ -40,7 +40,7 @@ document.querySelector(".login-form").addEventListener("submit", function(event)
         if (userType === "student") {
             window.location.href = "student/student-home.html";
         } else if (userType == "admin") {
-            window.location.href = "admin-home.html";
+            window.location.href = "admin/admin-home.html";
         }
     } else {
         // if login is incorrect direct to an alert
