@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book - Admin</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>EduLife</h2>
+            <nav>
+                <a href="/aya">Home</a>
+                <a href="#">Members</a>
+                <a href="#">Settings</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <main>
+            <header>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for books...">
+                    <button>🔍</button>
+                </div>
+                <div class="user-info">
+                    <span>Admin</span>
+                </div>
+            </header>
+
+            <!-- Flash Message Section -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <section class="form-section">
+                <h1>Add Book</h1>
+                <form action="/add-book" method="POST">
+                    <div class="form-item">
+                        <label for="title">Book Title</label>
+                        <input type="text" id="title" name="title" placeholder="Enter book title" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="author">Author</label>
+                        <input type="text" id="author" name="author" placeholder="Enter author name" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Enter book description" required></textarea>
+                    </div>
+                    <div class="form-item">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="Enter book location" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="copy-status">Copy Status</label>
+                        <select id="copy-status" name="copy-status" required>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                    <button class="submit-btn" type="submit">Add Book</button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add your custom JavaScript here, if needed -->
+    <script src="/static/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduLife - My Account</title>
+  <link rel="stylesheet" href="/static/account.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h1>EduLife</h1>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">My Account</a></li>
+          <li><a href="#">History</a></li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <header>
+        <input type="text" class="search-bar" placeholder="Search books...">
+      </header>
+      <section class="borrowed-books">
+        <h2>List of Borrowed Books</h2>
+        
+        <!-- Loop through the books data passed from Flask -->
+        {% for book in books %}
+          <div class="book-card">
+            <img src="{{ book.image_url }}" alt="Book Image" class="book-image">
+            <div class="book-details">
+              <p><strong>Title:</strong> {{ book.title }}</p>
+              <p><strong>Author:</strong> {{ book.author }}</p>
+              <p><strong>Due Date:</strong> {{ book.due_date }}</p>
+              <p><strong>Status:</strong> 
+                {% if book.status == 'Overdue' %}
+                  <span class="status overdue">Overdue</span>
+                {% else %}
+                  <span class="status not-due">Not Due Yet</span>
+                {% endif %}
+              </p>
+            </div>
+            <button class="renew-btn">Renew</button>
+          </div>
+        {% else %}
+          <p>No borrowed books found.</p>
+        {% endfor %}
+      </section>
+    </main>
+  </div>
+</body>
+</html>
