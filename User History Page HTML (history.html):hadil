@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User - Borrowing History</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h1>EduLib</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">History</a></li>
+                    <li><a href="#">Wishlist</a></li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1>Borrowing History</h1>
+            </header>
+
+            <!-- History List -->
+            <section class="history-list">
+                <div class="book-card">
+                    <img src="#" alt="Book Cover" class="book-image">
+                    <div class="book-info">
+                        <h3>Book Title</h3>
+                        <p><strong>Author:</strong> Jane Doe</p>
+                        <p><strong>Return Deadline:</strong> 2024-12-01</p>
+                        <p><strong>Status:</strong> <span class="status not-returned">Not Returned</span></p>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="#" alt="Book Cover" class="book-image">
+                    <div class="book-info">
+                        <h3>Book Title</h3>
+                        <p><strong>Author:</strong> John Smith</p>
+                        <p><strong>Return Deadline:</strong> 2024-11-15</p>
+                        <p><strong>Status:</strong> <span class="status returned">Returned</span></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <footer>
+        <p>© 2024 Al Akhawayn University - EduLib</p>
+        <button class="chatbot">Chat with us</button>
+    </footer>
+</body>
+
+</html>
