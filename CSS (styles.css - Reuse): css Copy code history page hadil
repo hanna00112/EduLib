@@ -1,0 +1,9 @@
+.status.not-returned {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status.returned {
+    background-color: #d4edda;
+    color: #155724;
+}
