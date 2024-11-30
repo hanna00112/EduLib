@@ -1,0 +1,80 @@
+/* General Reset */
+body, h1, h2, p, ul, li, a, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Main Layout */
+.page-layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #e5f3e5;
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    border-right: 1px solid #ccc;
+}
+
+.sidebar-header .logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1em;
+}
+
+.menu {
+    list-style: none;
+    margin-bottom: 2em;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+    padding: 0.5em;
+    display: block;
+}
+
+.menu a:hover {
+    background-color: #c9e6c9;
+}
+
+.content {
+    flex: 1;
+    padding: 1em;
+    background-color: #f0f9f0;
+}
+
+/* Book History */
+.book-card {
+    display: flex;
+    gap: 1em;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1em;
+    margin-bottom: 1em;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.book-image img {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1em;
+    background-color: #e5f3e5;
+    color: #333;
+    font-size: 0.9rem;
+    border-top: 1px solid #ccc;
+}
