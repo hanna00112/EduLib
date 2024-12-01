@@ -1,4 +1,18 @@
-
+//Fake User Data
+const validUser = {
+    student: {
+        email: "student@aui.ma",
+        password: "student123",
+    },
+    faculty: {
+        email: "faculty@aui.ma",
+        password: "faculty123",
+    },
+    admin: {
+        email: "admin@aui.ma",
+        password: "admin123",
+    },
+};
 // class=.login-form
 document.querySelector(".login-form").addEventListener("submit", function(event) {
     event.preventDefault(); //preventing form from refreshing the page
@@ -13,31 +27,24 @@ document.querySelector(".login-form").addEventListener("submit", function(event)
         alert("Please fill in all fields!");
         return
     }
-// Send the form data to Flask backend for login validation
-const formData = new FormData();
-formData.append("userType", userType);
-formData.append("username", email);
-formData.append("password", password);
 
-fetch("/login", {
-    method: "POST",
-    body: formData
-})
-.then(response => response.json())
-.then(data => {
-    if (data.success) {
-        // Redirect based on the user type (Flask handled the logic)
+    //making sure user info is correct 
+    // validUser: object to simulate student, faculty & admin login. Array at the top of page
+    if (
+        validUser[userType] &&
+        validUser[userType].email === email &&
+        validUser[userType].password === password
+    ) {
+        alert(`Welcome ${userType.charAt(0).toUpperCase() + userType.slice(1)}!`)
+            // directing the use based on usertype
         if (userType === "student") {
-            window.location.href = "/student-home";  // Adjust path based on Flask routes
-        } else if (userType === "admin") {
-            window.location.href = "/admin-home";
+            window.location.href = "student/student-home.html";
+        } else if (userType == "admin") {
+            window.location.href = "admin/admin-home.html";
         }
     } else {
-        alert("Invalid login. Please try again.");
+        // if login is incorrect direct to an alert
+        alert("Invalid login. Please try again");
     }
-})
-.catch(error => {
-    console.error("Error during login:", error);
-    alert("An error occurred. Please try again.");
-});
+    
 });

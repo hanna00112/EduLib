@@ -18,19 +18,6 @@
             <h1>Welcome to Mohammed VI Library!</h1>
             <h2>Log In to your Account</h2>
         </div>
-
-    <!-- Flash Messages Section -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="flash-messages">
-            <ul>
-                {% for category, message in messages %}
-                    <li class="flash-message {{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-{% endwith %}
         
         <form class="login-form">
             <label for="userType">Log in as:</label>
@@ -38,7 +25,7 @@
                 <option value="student">Student</option>
                 <option value="admin">Admin</option>
             </select>
-            
+
             <label for="username">AUI Email:</label>
             <input type="email" id="username" name="username" placeholder="J.Doe@aui.ma" required>
 
