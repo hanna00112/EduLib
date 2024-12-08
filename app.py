@@ -58,12 +58,37 @@ def serialize_books(book):
 def index():
     return render_template('non-admin/index.html')
 
-    
+
+# Route to handle login form submission
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form['username']
+    password = request.form['password']
+    role = request.form['userType']
+
+    # Check if the user exists in the database
+    user = User.query.filter_by(email=email, role=role).first()
+
+    if user and user.password == password:
+        if role == 'student':
+            return redirect(url_for('student_home'))
+        elif role == 'admin':
+            return redirect(url_for('admin_home'))
+    else:
+        flash('Invalid credentials. Please try again.', 'error')
+        return redirect(url_for('index'))
+
+@app.route('/non-admin/home')
+def student_home():
+    return render_template('/student/home')
+
+
 @app.route('/myaccount')
 def home():
       # Query the database for borrowed books data
     books = Book.query.all()
     return render_template('non-admin/account.html', books=books)
+
 
 
 @app.route('/nait')
