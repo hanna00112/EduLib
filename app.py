@@ -54,7 +54,11 @@ def serialize_books(book):
     book['_id'] = str(book['_id'])  # Convert ObjectId to string
     return book
 
+@app.route('/')
+def index():
+    return render_template('non-admin/index.html')
 
+    
 @app.route('/myaccount')
 def home():
       # Query the database for borrowed books data
