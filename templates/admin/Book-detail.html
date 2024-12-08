@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Book Details</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="page-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/images/logo.png" alt="EduLib Logo" class="logo">
+                <h2>EduLib</h2>
+            </div>
+            <nav>
+                <ul class="menu">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Tasks</a></li>
+                    <li><a href="#">Members</a></li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </nav>
+            <div class="actions">
+                <h3>Actions</h3>
+                <button class="action-btn">Add Book</button>
+                <div class="manage-account">
+                    <label for="manage-id">Manage Account</label>
+                    <input type="text" id="manage-id" placeholder="Enter ID...">
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header>
+                <input type="text" class="search-bar" placeholder="Search for book...">
+                <div class="user-info">
+                    <img src="assets/images/user-icon.png" alt="User Icon" class="user-icon">
+                    <span>Admin</span>
+                </div>
+            </header>
+
+            <section class="book-details">
+                <h1>Book Details</h1>
+                <div class="book-info">
+                    <div class="book-image">
+                        <img src="assets/images/book-placeholder.png" alt="Book Cover">
+                    </div>
+                    <div class="book-description">
+                        <h2>Book Title</h2>
+                        <p><strong>Author:</strong> Author Name</p>
+                        <p><strong>Description:</strong> Book description goes here...</p>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="remove-btn">Remove</button>
+                    <button class="edit-btn">Edit</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p>About | Contact | Privacy policy | Terms & Conditions</p>
+            <p>&copy; 2024 All rights reserved</p>
+        </footer>
+    </div>
+</body>
+</html>
