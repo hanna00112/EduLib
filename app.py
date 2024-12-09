@@ -107,7 +107,7 @@ def serialize_books(book):
 def login():
     try:
         if request.method == 'POST':
-            # Handle form submission or JSON request
+            # Handle submission from user
             if request.is_json:
                 data = request.json
                 email = data.get('email')
@@ -118,7 +118,7 @@ def login():
                 password = request.form.get('password')
                 user_type = request.form.get('userType')
 
-            # Validate form fields
+            # Validate 
             if not email or not password or not user_type:
                 return jsonify({"error": "Please fill in all fields"}), 400
 
@@ -140,13 +140,13 @@ def login():
                     if user_type == 'admin':
                         return jsonify({"message": "Welcome Admin!", "redirect": url_for('add_book')}), 200
                     else:
-                        return jsonify({"message": "Welcome Faculty/Student!", "redirect": url_for('home')}), 200
+                        return jsonify({"message": f"Welcome {user_type}!", "redirect": url_for('home')}), 200
                 else:
                     return jsonify({"error": f"User does not have the {user_type} role"}), 403
             else:
                 return jsonify({"error": "Invalid login credentials"}), 401
 
-        # If GET request, render a login page
+        # If GET request, render the login page
         return render_template('index.html')
 
     except Exception as e:
@@ -158,9 +158,9 @@ def home():
     return render_template('non-admin/account.html', books=books)
 
 
-@app.route('/nait')
-def mohammed():
-    return render_template('admin/admin-add.html')
+#@app.route('/nait')
+#def mohammed():
+   # return render_template('admin/admin-add.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
