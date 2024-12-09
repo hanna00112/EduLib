@@ -164,47 +164,5 @@ def mohammed():
 
 
 # Route to handle the form submission and add a book to the database
-@app.route('/add-book', methods=['GET', 'POST'])
-def add_book():
-    if request.method == 'POST':
-        if request.is_json:
-            # Log incoming data
-            print("Received POST request with JSON data:", request.get_json())
-            # Parse the JSON data
-            book_data = request.get_json()
-
-            title = book_data['title']
-            author = book_data['author']
-            description = book_data['description']
-            location = book_data['location']
-            copy_status = book_data['status']
-            selected_genres = book_data['genres']
-            isbn = book_data['isbn']
-
-            # Query the Genre objects based on selected genre IDs
-            genre_objects = Genre.query.filter(Genre.id.in_(selected_genres)).all()
-
-            # Insert into the SQLite database
-            new_book = Book(title=title, author=author, description=description, location=location, copy_status=copy_status, isbn=isbn)
-            db.session.add(new_book)
-            db.session.commit()
-
-            # Now associate the book with the selected genres
-            for genre in genre_objects:
-                new_book.genres.append(genre)  # Add the genre to the book
-
-            db.session.commit()  # Commit the changes
-
-            # Return success message as JSON
-            return jsonify({"message": "Book added successfully!"})
-        else:
-            # Handle non-JSON requests or invalid requests
-            return jsonify({"error": "Invalid request format"}), 400
-
-    # Fetch all genres from the database to display in the form
-    genres = Genre.query.all()
-
-    # Render the form page
-    return render_template('admin/admin-add.html', genres=genres)
-if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+#@app.route('/add-book', methods=['GET', 'POST'])
+#def add_book():
