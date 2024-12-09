@@ -162,7 +162,5 @@ def home():
 def mohammed():
     return render_template('admin/admin-add.html')
 
-
-# Route to handle the form submission and add a book to the database
-#@app.route('/add-book', methods=['GET', 'POST'])
-#def add_book():
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)
