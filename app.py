@@ -93,10 +93,6 @@ class BookCheckoutHistory(db.Model):
 # Migration set up
 with app.app_context():
     db.create_all()
-# Migration setup
-#with app.app_context():
-   # if app.config['ENV'] == 'development':  # Only run in development
-      #  db.create_all()
 
 # Function to serialize books and convert ObjectId to string
 def serialize_books(book):
