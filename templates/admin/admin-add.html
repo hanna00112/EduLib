@@ -43,6 +43,7 @@
                 {% endif %}
             {% endwith %}
 
+            <!-- Form Section -->
             <section class="form-section">
                 <h1>Add Book</h1>
                 <form action="/add-book" method="POST">
@@ -59,6 +60,10 @@
                         <textarea id="description" name="description" rows="4" placeholder="Enter book description" required></textarea>
                     </div>
                     <div class="form-item">
+                        <label for="isbn">ISBN</label>
+                        <input type="text" id="isbn" name="isbn" placeholder="Enter ISBN" required>
+                    </div>
+                    <div class="form-item">
                         <label for="location">Location</label>
                         <input type="text" id="location" name="location" placeholder="Enter book location" required>
                     </div>
@@ -69,6 +74,18 @@
                             <option value="unavailable">Unavailable</option>
                         </select>
                     </div>
+
+                    <!-- Genre Selection -->
+                    <div class="form-item">
+                        <label>Genres</label>
+                        {% for genre in genres %}
+                            <div>
+                                <input type="checkbox" name="genres" value="{{ genre.id }}" id="genre-{{ genre.id }}">
+                                <label for="genre-{{ genre.id }}">{{ genre.name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
                     <button class="submit-btn" type="submit">Add Book</button>
                 </form>
             </section>

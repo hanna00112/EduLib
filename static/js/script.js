@@ -1,50 +1,43 @@
-//Fake User Data
-const validUser = {
-    student: {
-        email: "student@aui.ma",
-        password: "student123",
-    },
-    faculty: {
-        email: "faculty@aui.ma",
-        password: "faculty123",
-    },
-    admin: {
-        email: "admin@aui.ma",
-        password: "admin123",
-    },
-};
-// class=.login-form
 document.querySelector(".login-form").addEventListener("submit", function(event) {
-    event.preventDefault(); //preventing form from refreshing the page
+    event.preventDefault(); // Prevent form from submitting the default way
 
-    // getting form values 
-    const userType = document.getElementById("userType").value; //retrieves value from
-    const email = document.getElementById("username").value.trim(); // trims down white space
+    // Get form values
+    const userType = document.getElementById("userType").value;
+    const email = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    // checking all fields filled
-    if (!email || !password) {
+    // Check if all fields are filled
+    if (!email || !password || !userType) {
         alert("Please fill in all fields!");
-        return
+        return;
     }
 
-    //making sure user info is correct 
-    // validUser: object to simulate student, faculty & admin login. Array at the top of page
-    if (
-        validUser[userType] &&
-        validUser[userType].email === email &&
-        validUser[userType].password === password
-    ) {
-        alert(`Welcome ${userType.charAt(0).toUpperCase() + userType.slice(1)}!`)
-            // directing the use based on usertype
-        if (userType === "student") {
-            window.location.href = "student/student-home.html";
-        } else if (userType == "admin") {
-            window.location.href = "admin/admin-home.html";
+    // Create the request payload
+    const loginData = {
+        email: email,
+        password: password,
+        userType: userType, // "student", "faculty", "admin"
+    };
+
+    // Send data to backend using fetch
+    fetch("/", {
+        method: "POST", 
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginData),  // Send the data as JSON
+    })
+    .then(response => response.json()) // Parse the response as JSON
+    .then(data => {
+        if (data.error) {
+            alert(data.error);  // If there's an error, display it
+        } else {
+            alert(data.message);  // Show success message
+            window.location.href = data.redirect; // Redirect based on backend response
         }
-    } else {
-        // if login is incorrect direct to an alert
-        alert("Invalid login. Please try again");
-    }
-    
+    })
+    .catch(error => {
+        console.error("Error during login:", error);
+        alert("An error occurred. Please try again.");
+    });
 });

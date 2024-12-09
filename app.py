@@ -1,5 +1,7 @@
-from flask import Flask, redirect, render_template, request, url_for, flash
+from flask import Flask, redirect, render_template, request, url_for, flash, session, jsonify
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import os
 from datetime import datetime
 
@@ -8,6 +10,7 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 
 # Set secret key for sessions
 app.secret_key = os.urandom(24)  # You can replace this with a fixed key for production
+bcrypt = Bcrypt(app)
 
 # SQLite database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///edulife.db'
@@ -15,10 +18,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
-# MongoDB connection
-#client = MongoClient('mongodb+srv://sT0PDURwIWyOaKhT:a1OwPIjYgUSNxKml@cluster0.nf7wc.mongodb.net/', tlsAllowInvalidCertificates=True)
-#db = client['edulife']  # Database name
-#collection = db['books']  # Collection name
+
+# Initialize Flask Migrate
+migrate = Migrate(app, db)
 
 # Define the Book model
 class Book(db.Model):
@@ -26,15 +28,55 @@ class Book(db.Model):
     title = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
+    isbn = db.Column(db.String(13), nullable=False)
     location = db.Column(db.String(255))
     copy_status = db.Column(db.String(50))
+
+    # Many-to-many relationship with Genre
+    genres = db.relationship('Genre', secondary='book_genre', back_populates='books')
+
+class Genre(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+
+    # Many-to-many relationship with Book 
+    books = db.relationship('Book', secondary='book_genre', back_populates='genres')
+
+class BookGenre(db.Model):
+    __tablename__ = 'book_genre'
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), primary_key=True)
+    genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), primary_key=True)
 
 # Define the User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    role = db.Column(db.String(20), nullable=False)  # 'student' or 'admin'
+    first_name = db.Column(db.String(20), nullable=False)
+    last_name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
+    
+    # Many-to-many relationship with Role
+    roles = db.relationship('Role', secondary='user_role', back_populates='users')
+    
+    def set_password(self, password):
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
+
+# Define the Role model
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+
+    # Many-to-many relationship with User
+    users = db.relationship('User', secondary='user_role', back_populates='roles')
+
+# Define UserRole model for many-to-many relationship
+class UserRole(db.Model):
+    __tablename__ = 'user_role'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key=True)
 
 # Define the BookCheckoutHistory model
 class BookCheckoutHistory(db.Model):
@@ -48,16 +90,70 @@ class BookCheckoutHistory(db.Model):
     book = db.relationship('Book', backref='checkouts')
     user = db.relationship('User', backref='checkouts')
 
+# Migration set up
+with app.app_context():
+    db.create_all()
+# Migration setup
+#with app.app_context():
+   # if app.config['ENV'] == 'development':  # Only run in development
+      #  db.create_all()
 
 # Function to serialize books and convert ObjectId to string
 def serialize_books(book):
     book['_id'] = str(book['_id'])  # Convert ObjectId to string
     return book
 
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    try:
+        if request.method == 'POST':
+            # Handle form submission or JSON request
+            if request.is_json:
+                data = request.json
+                email = data.get('email')
+                password = data.get('password')
+                user_type = data.get('userType')
+            else:
+                email = request.form.get('email')
+                password = request.form.get('password')
+                user_type = request.form.get('userType')
+
+            # Validate form fields
+            if not email or not password or not user_type:
+                return jsonify({"error": "Please fill in all fields"}), 400
+
+            # Validate user type
+            if user_type not in ['admin', 'faculty', 'student']:
+                return jsonify({"error": "Invalid user type"}), 400
+
+            # Query the user by email
+            user = User.query.filter_by(email=email).first()
+
+            # Check user credentials
+            if user and user.check_password(password):
+                # Ensure the user has the correct role
+                if any(role.name == user_type for role in user.roles):
+                    session['user_id'] = user.id
+                    session['user_role'] = user_type
+
+                    # Redirect based on user type
+                    if user_type == 'admin':
+                        return jsonify({"message": "Welcome Admin!", "redirect": url_for('add_book')}), 200
+                    else:
+                        return jsonify({"message": "Welcome Faculty/Student!", "redirect": url_for('home')}), 200
+                else:
+                    return jsonify({"error": f"User does not have the {user_type} role"}), 403
+            else:
+                return jsonify({"error": "Invalid login credentials"}), 401
+
+        # If GET request, render a login page
+        return render_template('index.html')
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 @app.route('/myaccount')
 def home():
-      # Query the database for borrowed books data
     books = Book.query.all()
     return render_template('non-admin/account.html', books=books)
 
@@ -71,23 +167,44 @@ def mohammed():
 @app.route('/add-book', methods=['GET', 'POST'])
 def add_book():
     if request.method == 'POST':
-        # Get data from the form
-        title = request.form['title']
-        author = request.form['author']
-        description = request.form['description']
-        location = request.form['location']
-        copy_status = request.form['copy-status']
-        
-        # Insert into the SQLite database
-        new_book = Book(title=title, author=author, description=description, location=location, copy_status=copy_status)
-        db.session.add(new_book)
-        db.session.commit()
-        
-        # Flash success message and redirect to the add-book page
-        flash('Book added successfully!', 'success')
-        return redirect(url_for('add_book'))
-    
+        if request.is_json:
+            # Log incoming data
+            print("Received POST request with JSON data:", request.get_json())
+            # Parse the JSON data
+            book_data = request.get_json()
+
+            title = book_data['title']
+            author = book_data['author']
+            description = book_data['description']
+            location = book_data['location']
+            copy_status = book_data['status']
+            selected_genres = book_data['genres']
+            isbn = book_data['isbn']
+
+            # Query the Genre objects based on selected genre IDs
+            genre_objects = Genre.query.filter(Genre.id.in_(selected_genres)).all()
+
+            # Insert into the SQLite database
+            new_book = Book(title=title, author=author, description=description, location=location, copy_status=copy_status, isbn=isbn)
+            db.session.add(new_book)
+            db.session.commit()
+
+            # Now associate the book with the selected genres
+            for genre in genre_objects:
+                new_book.genres.append(genre)  # Add the genre to the book
+
+            db.session.commit()  # Commit the changes
+
+            # Return success message as JSON
+            return jsonify({"message": "Book added successfully!"})
+        else:
+            # Handle non-JSON requests or invalid requests
+            return jsonify({"error": "Invalid request format"}), 400
+
+    # Fetch all genres from the database to display in the form
+    genres = Genre.query.all()
+
     # Render the form page
-    return render_template('admin/admin-add.html')
+    return render_template('admin/admin-add.html', genres=genres)
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
