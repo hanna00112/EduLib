@@ -151,7 +151,7 @@ def login():
 @app.route('/myaccount')
 def home():
     books = Book.query.all()
-    return render_template('non-admin/account.html', books=books)
+    return render_template('non-admin/student-home.html', books=books)
 
 
 #@app.route('/nait')
