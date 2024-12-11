@@ -1,89 +1,195 @@
 /* Adding comment  */
-
+/*For Login and Sign up pages*/
 body {
-    background-image: url('/static/photos/Campus-photo.jpg'); /* Path to your image */
-    background-size: cover; /* Scale the image to cover the viewport */
-    background-position: center; /* Center the image */
-    background-color: #f5f5f5;
-    font-family: "Playfair Display", serif;
-    font-weight: 400;
+    font-family: 'Inria Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #CBDDC9;
+    color: #333;
+}
+header h1 {
+    font-family: 'Inknut Antiqua', serif;
+    margin: 0;
+    color: #333;
 }
 
-.login-container {
-    padding: 40px;
-    margin: 100px auto; /* Centers the container */
-    background-color: #004d1a; /* AUI green */
-    border-radius: 15px; /* Rounds the edges */
-    box-shadow: 10px 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 40%;
-}
-/* Welcome to Mohammad VI library text  */
-.login-header h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    color: #ffffff;/* White text */
-    font-variant: initial
-}
-
-.login-header h2 {
-    font-size: 1.2rem;
-    font-weight: normal;
-    margin-bottom: 20px;
-    color: #ffffff;
-    /* Lighter text for subheading */
-}
-
-.login-form {
+header {
     display: flex;
-    flex-direction: column;
+    align-items: center;  
+    justify-content: flex-start;  
+    padding: 0.5rem;
+    background-color: #f1f1f1;
+}
+
+header .logo img {
+    height: 50px;  
+    border-radius: 2px;  
+    margin-right: 10px; 
+}
+
+header h1 {
+    margin: 0;  
+    color: #333;  
+    font-size: 1rem;  
+    font-weight: normal;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 120vh;
+}
+
+.main-container {
+    width: 100%;  
+    max-width: 1200px;  
+    background-color: rgba(255, 255, 255, 0.4);  
+    padding: 5rem ;
+    border-radius: 5px;  
+    margin: 0 auto;
+    display: flex; 
+    flex-direction: column; 
     align-items: center;
 }
-
-.login-form label {
-    margin: 10px 0 5px;
-    font-size: 1rem;
-    text-align: left;
-    width: 100%
+.main-container h2 {
+    position: absolute;
+    top: 85px;
+    left: 120px;
+    font-size: 1.8rem;
+    font-weight: normal;
+    color: #333;
 }
+
+
+.content-wrapper {
+    display: flex; 
+    justify-content: center;
+    align-items: stretch; 
+    gap: 2rem; 
+    width: 100%;
+}
+
+
+.image-container {
+    flex: 1;
+    max-width: 70%; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border-radius: 8px; 
+    
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 100%; 
+    object-fit: contain; 
+    border-radius: 2px;
+    transform: translateY(-30px);
+}
+
+
+.form-container {
+    flex: 1; 
+    max-width: 50%; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+}
+
+
+.login-form {
+    width: 100%;  
+    max-width: 500px !important;  
+    background-color: rgba(255, 255, 255, 0.9);  
+    padding: 3rem !important;
+    border-radius: 8px;  
+    box-shadow: 0 4px 10px #E4F6EA(0, 0, 0, 0.1);  
+    text-align: left;
+}
+h2 {
+    margin-bottom: 2rem;
+    color: #4caf50;
+}
+
+.login-form label{
+    display: block;
+    margin-bottom: 0.8rem; 
+    font-size: 1rem; 
+    color: #333; 
+}
+
 
 .login-form input,
 .login-form select {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.login-form input {
-    background-color: #ffffff;
-    color: #333333;
-}
-
-.login-form select {
-    background-color: #ffffff;
-    color: #333333;
+    padding: 0.5rem;
+    border: 1.1px solid #307E54;
+    border-radius: 5px;
+    background-color: #E4F6EA;
+    font-size: 0.8rem;
+    margin-bottom: 1rem; 
+    margin-top: 0.3rem;
 }
 
 .login-form button {
-    width: auto;
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: #004d1a;
-    background-color: #ffff; /* Darker green for button */
+    background-color: #307E54;
+    color: white;
+    padding: 0.7rem;  
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 2rem; 
 }
 
 .login-form button:hover {
-    background-color: #cce5cc; /* Slightly darker on hover */
+    background-color: #1e8e52;
 }
-.login-form label {
-    color: #ffffff;
+.signup-message {
+    color: #000000;  
+    font-size: 1rem;  
+    margin-top: 1rem; 
+    font-weight: normal;
 }
+
+.signup-message a {
+    color: #307E54;  
+    text-decoration: none;  
+}
+
+.signup-message a:hover {
+    color: #3ed183;  
+}
+
+footer {
+    width: 100%;
+    position: fixed;
+    bottom: 0; 
+    left: 0;
+    text-align: center;
+    padding: 0.2rem;
+    background: #f1f1f1;
+    margin-top: auto;
+}
+
+
+
+
+/*Old body*/
+/*body {
+    background-image: url('/static/photos/Campus-photo.jpg'); /* Path to your image */
+    /*background-size: cover; /* Scale the image to cover the viewport */
+  /*  background-position: center; /* Center the image */
+  /*  background-color: #f5f5f5;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+} */
+
+
+
 /* CSS FOR STUDENT-HOME */
 
 .container {
@@ -241,8 +347,8 @@ body {
 
 /* Footer Styles */
 .footer {
-    background-color: #004d1a; /* Dark green background */
-    color: #fff; /* White text */
+    background-color: #f1f1f1; /* Dark green background */
+    color: #022a15; /* White text */
     text-align: center;
     padding: 20px 10px; /* Padding for spacing */
     font-size: 0.9rem;
@@ -253,8 +359,8 @@ body {
 .footer p {
     margin: 0;
     font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 10px; /* Space between text and list */
+    font-weight: normal;
+    margin-bottom: 10px; 
 }
 
 .footer-people {
@@ -273,7 +379,7 @@ body {
 
 .footer-people a {
     text-decoration: none; /* Remove underline from links */
-    color: #fff; /* White text for links */
+    color: #3e463c; /* White text for links */
     transition: color 0.3s ease; 
 }
 

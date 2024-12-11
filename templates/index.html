@@ -1,41 +1,67 @@
-<!-- How to comment -->
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Log in page</title>
-    <!--Adding the CSS to the page -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - EduLib</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>Welcome to Mohammed VI Library!</h1>
-            <h2>Log In to your Account</h2>
+    <!-- Logo and name -->
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='photos/auilogo.jpeg') }}" alt="EduLib Logo" />
         </div>
+        <h1>EduLib</h1>
+    </header>
+    <main>
+        <main>
+            <div class="main-container">
+                <h2>Login</h2>
+                <div class="content-wrapper">
+                   
+                    <section class="form-container">
+                        <h2>Login</h2>
+
+                        <form class="login-form">
+                            <label for="login-role">Log in as:</label>
+                            <select id="login-role">
+                                <option value="admin">Admin</option>
+                                <option value="non-admin">Non-Admin</option>
+                            </select>
+                        
+                            <label for="login-email">Email Address</label>
+                            <input type="email" id="login-email" placeholder="Enter your email address">
+                        
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" placeholder="Enter your password">
+                        
+                            <button type="submit">Sign In</button>
+                        </form>
+                        <p class="signup-message">Don't have an account? <a href="signup.html">Sign up</a></p>
+                    </section>
+                    <!-- Image Section -->
+                    <div class="image-container">
+                        <img src="{{ url_for('static', filename='photos/library.jpeg') }}" alt="Login Illustration">
+                    </div>
+                </div>
+            </div>
+        </main>
         
-        <form class="login-form">
-            <label for="userType">Log in as:</label>
-            <select id="userType" name="userType" required>
-                <option value="student">Student</option>
-                <option value="admin">Admin</option>
-            </select>
-
-            <label for="username">AUI Email:</label>
-            <input type="email" id="username" name="username" placeholder="J.Doe@aui.ma" required>
-
-            <label for="password">AUI Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-
-            <button type="submit">Log In</button>
-        </form>
-    </div>
+    <footer class="footer">
+            <p> 2024 All Rights Reserved</p>
+            <ul class="footer-people">
+                <li><a href="#">Haitham Fajri</a></li>
+                <li><a href="#">Hanna Abrahem</a></li>
+                <li><a href="#">Rim Cherqi</a></li>
+                <li><a href="#">Aya Merhraoui</a></li>
+                <li><a href="#">Aya Nait Mbarek</a></li>
+                <li><a href="#">Hadil Chafik</a></li>
+            </ul>
+    
+        </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
-
 </html>

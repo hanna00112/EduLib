@@ -119,34 +119,39 @@ def login():
                 return jsonify({"error": "Please fill in all fields"}), 400
 
             # Validate user type
-            if user_type not in ['admin', 'faculty', 'student']:
+            if user_type == "admin":
+                user_roles = ['admin']
+            elif user_type == "non-admin":
+                user_roles = ['faculty', 'student']
+            else:
                 return jsonify({"error": "Invalid user type"}), 400
-
+            
             # Query the user by email
             user = User.query.filter_by(email=email).first()
 
             # Check user credentials
             if user and user.check_password(password):
                 # Ensure the user has the correct role
-                if any(role.name == user_type for role in user.roles):
+                if user_type == "admin" and any(role.name == "admin" for role in user.roles):
                     session['user_id'] = user.id
-                    session['user_role'] = user_type
-
-                    # Redirect based on user type
-                    if user_type == 'admin':
-                        return jsonify({"message": "Welcome Admin!", "redirect": url_for('add_book')}), 200
-                    else:
-                        return jsonify({"message": f"Welcome {user_type}!", "redirect": url_for('home')}), 200
+                    session['user_role'] = 'admin'
+                    return jsonify({"message": "Welcome Admin!", "redirect": url_for('add_book')}), 200
+                elif user_type == "non-admin" and any(role.name in user_roles for role in user.roles):
+                    session['user_id'] = user.id
+                    session['user_role'] = 'non-admin'
+                    return jsonify({"message": f"Welcome {user_type}!", "redirect": url_for('home')}), 200
                 else:
                     return jsonify({"error": f"User does not have the {user_type} role"}), 403
+
             else:
                 return jsonify({"error": "Invalid login credentials"}), 401
-
-        # If GET request, render the login page
+        
+            # If GET request, render the login page
         return render_template('index.html')
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 @app.route('/myaccount')
 def home():
