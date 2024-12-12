@@ -20,7 +20,7 @@
     <!-- Main Registration Form Section -->
     <main>
         <div class="main-container">
-            <h2>Register for an Account</h2>
+            <h2 class="register-line" >Register for an Account</h2>
             <div class="content-wrapper">
 
                 <section class="form-container">
@@ -43,10 +43,16 @@
 
                         <!-- Role Selection -->
                         <label for="role">Register as:</label>
-                        <select id="role" name="role">
-                            <option value="admin">Admin</option>
-                            <option value="non-admin">Non-Admin</option>
-                        </select>
+                            <div class="role-selection">
+                            <label>
+                            <input type="checkbox" id="admin" name="role" value="admin">
+                             Admin
+                            </label>
+                        <label>
+                        <input type="checkbox" id="non-admin" name="role" value="non-admin">
+                            Non-Admin
+                            </label>
+                            </div>
 
                         <!-- Submit Button -->
                         <button type="submit">Register</button>
