@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for, flash, ses
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import re
 import os
 from datetime import datetime
 
@@ -99,6 +100,10 @@ def serialize_books(book):
     book['_id'] = str(book['_id'])  # Convert ObjectId to string
     return book
 
+@app.route('/test', methods=['GET'])
+def test():
+    return 'Flask is working!'
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     try:
@@ -151,6 +156,73 @@ def login():
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method =='POST':
+        print("POST request received")  # Debug log
+        
+        data = request.json
+        print(f"JSON data received: {data}")  # Debug log
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        email = data.get('email')
+        password = data.get('password')
+        user_types = data.get('userType',[]) #A list of user types
+
+        
+        # Normalize `user_types` to a list
+        if isinstance(user_types, str):  # If it's a single role wrap it in a list
+            user_types = [user_types]
+        print(f"User types normalized: {user_types}")
+        # Validate 
+        if not email or not password or not user_types:
+            return jsonify({"error": "Please fill in all fields"}), 400
+        
+        # Validate email format
+        
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, email):
+            return jsonify({"error": "Invalid email format"}), 400
+
+        #check if email exists in database
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            return jsonify({"error": "Email already registered"}), 400
+
+        #check if the role exists in teh database
+        valid_roles = Role.query.filter(Role.name.in_(user_types)).all()
+        if len(valid_roles) != len(user_types):
+            return jsonify({"error": "Invalid role(s) provided"}), 400
+        
+        #hash the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+       
+
+       #create a new user
+        new_user= User(first_name=first_name, last_name=last_name,email=email,password=hashed_password)
+        
+        try:
+            new_user.roles=valid_roles
+        
+            #add and commit the user to the database
+            db.session.add(new_user)
+            db.session.commit()
+            print("User registered successfully")  # Debug log
+            return jsonify({"success": "Registration successful"}), 200
+            
+            return redirect(url_for('login')) #after registration, user is sent back to the login page
+        
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {str(e)}")  # Debug log
+            return jsonify({"error": f"Registration failed: {str(e)}"}), 500
+        
+    return render_template('sign-up.html') 
+
+
+
+
 
 
 @app.route('/myaccount')
