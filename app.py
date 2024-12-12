@@ -164,6 +164,12 @@ def Admin_home():
     books = Book.query.all()
     return render_template('admin/admin-home.html', books=books)
 
+
+# INDEX Page -- login
+@app.route('/index')
+def main():
+    return render_template('index.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
