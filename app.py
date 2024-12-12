@@ -135,7 +135,7 @@ def login():
                 if user_type == "admin" and any(role.name == "admin" for role in user.roles):
                     session['user_id'] = user.id
                     session['user_role'] = 'admin'
-                    return jsonify({"message": "Welcome Admin!", "redirect": url_for('add_book')}), 200
+                    return jsonify({"message": "Welcome Admin!", "redirect": url_for('Admin_home')}), 200
                 elif user_type == "non-admin" and any(role.name in user_roles for role in user.roles):
                     session['user_id'] = user.id
                     session['user_role'] = 'non-admin'
@@ -157,6 +157,50 @@ def login():
 def home():
     books = Book.query.all()
     return render_template('non-admin/student-home.html', books=books)
+
+# to access the admin home page
+@app.route('/admin/home')
+def Admin_home():
+    books = Book.query.all()
+    return render_template('admin/admin-home.html', books=books)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Get form data
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # Validate input
+        if not first_name or not last_name or not email or not password:
+            flash('Please fill in all fields', 'error')
+            return redirect(url_for('register'))
+
+        # Check if the email already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('Email already registered', 'error')
+            return redirect(url_for('register'))
+
+        # Create new user and hash the password
+        new_user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+        )
+        new_user.set_password(password)  # Hash the password
+
+        # Add to the database
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('Registration successful! Please log in.', 'success')
+        return redirect(url_for('login'))
+
+    # If GET request, render the registration form
+    return render_template('signup.html')
 
 
 #@app.route('/nait')

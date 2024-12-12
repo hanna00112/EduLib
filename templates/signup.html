@@ -1,9 +1,81 @@
-<HTML>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - EduLib</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Header with Logo -->
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='photos/auilogo.jpeg') }}" alt="EduLib Logo" />
+        </div>
+        <h1>EduLib</h1>
+    </header>
 
-    </head>
-    <body>
-        
+    <!-- Main Registration Form Section -->
+    <main>
+        <div class="main-container">
+            <h2>Register for an Account</h2>
+            <div class="content-wrapper">
 
-    </body>
-</HTML>
+                <section class="form-container">
+                    <form class="login-form" method="POST" action="{{ url_for('register') }}">
+                        <!-- First Name -->
+                        <label for="first_name">First Name:</label>
+                        <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+
+                        <!-- Last Name -->
+                        <label for="last_name">Last Name:</label>
+                        <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
+
+                        <!-- Email -->
+                        <label for="email">Email Address:</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+                        <!-- Password -->
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+                        <!-- Role Selection -->
+                        <label for="role">Register as:</label>
+                        <select id="role" name="role">
+                            <option value="admin">Admin</option>
+                            <option value="non-admin">Non-Admin</option>
+                        </select>
+
+                        <!-- Submit Button -->
+                        <button type="submit">Register</button>
+                    </form>
+
+                    <!-- Link to Login Page -->
+                    <p class="login-message">Already have an account? <a href="{{ url_for('login') }}">Log in here</a></p>
+                </section>
+
+                <!-- Image Section -->
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='photos/library.jpeg') }}" alt="Library Illustration">
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <p>&copy; 2024 All Rights Reserved</p>
+        <ul class="footer-people">
+            <li><a href="#">Haitham Fajri</a></li>
+            <li><a href="#">Hanna Abrahem</a></li>
+            <li><a href="#">Rim Cherqi</a></li>
+            <li><a href="#">Aya Merhraoui</a></li>
+            <li><a href="#">Aya Nait Mbarek</a></li>
+            <li><a href="#">Hadil Chafik</a></li>
+        </ul>
+    </footer>
+</body>
+</html>
