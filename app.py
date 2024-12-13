@@ -158,6 +158,39 @@ def home():
     books = Book.query.all()
     return render_template('non-admin/student-home.html', books=books)
 
+@app.route('/admin/add-book', methods=['GET', 'POST'])
+def add_book():
+    # Ensure the user is logged in and is an admin
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        # Get form data
+        title = request.form.get('title')
+        author = request.form.get('author')
+        isbn = request.form.get('isbn')
+        description = request.form.get('description')
+        location = request.form.get('location')
+        copy_status = request.form.get('copy_status')
+        # Validate form inputs
+        if not title or not author or not isbn:
+            flash("Title, Author, and ISBN are required.", "danger")
+            return redirect(url_for('add_book'))
+        # Add the book to the database
+        new_book = Book(
+            title=title,
+            author=author,
+            isbn=isbn,
+            description=description,
+            location=location,
+            copy_status=copy_status
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        flash("Book added successfully!", "success")
+        return redirect(url_for('add_book'))
+    return render_template('admin/admin-add.html')
+#check
 
 #@app.route('/nait')
 #def mohammed():
