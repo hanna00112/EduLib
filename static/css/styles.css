@@ -321,6 +321,15 @@ h2 {
     border-radius: 5px;
     margin-bottom: 15px;
 }
+.submit-btn {
+    background-color: #307E54;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
 
 
 
