@@ -178,23 +178,26 @@ def get_roles():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        if request.is_json:  # Check if the request is JSON
-            data = request.get_json()  # Parse JSON from the request
+          # Handle submission from user
+        if request.is_json:
+            data = request.json
+            # Get form data
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            email = data.get('email')
+            password = data.get('password')
+            roles = data.get('roles', [])
         else:
-            return jsonify({"error": "Content-Type must be application/json test 1"}), 400    
-        
-        # Get form data
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
-        email = data.get('email')
-        password = data.get('password')
-        roles = data.get('roles', [])
-
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            roles = request.form.getlist('roles')
         # Normalize roles to a list
         if isinstance(roles, str):  # If it's a single role wrap it in a list
             roles = [roles]
 
-
+        print("Received data:", roles)
         # Validate input
         if not first_name or not last_name or not email or not password or not roles:
             flash('Please fill in all fields', 'error')
@@ -215,10 +218,12 @@ def register():
 
         # Convert user input into a set for easy comparison
         user_roles_set = set(roles)
+
         # Check if the provided roles match one of the valid combinations
+        
         if user_roles_set not in valid_combinations:
-            flash('Invalid Entry', 'error')
-            return redirect(url_for('register'))
+           flash('Invalid role combination', 'error')
+           return redirect(url_for('register'))
         # Check if the email already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:

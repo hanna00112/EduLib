@@ -121,6 +121,46 @@ main {
     border-radius: 8px;  
     box-shadow: 0 4px 10px #E4F6EA(0, 0, 0, 0.1);  
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.register-form label{
+    display: block;
+    margin-bottom: 0.8rem; 
+    font-size: 1rem; 
+    color: #333; 
+}
+
+
+.register-form input,
+.register-form select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1.1px solid #307E54;
+    border-radius: 5px;
+    background-color: #E4F6EA;
+    font-size: 0.8rem;
+    margin-bottom: 1rem; 
+    margin-top: 0.3rem;
+}
+
+.register-form button {
+    background-color: #307E54;
+    color: white;
+    padding: 0.7rem;  
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 2rem; 
+}
+
+.login-form button:hover {
+    background-color: #1e8e52;
 }
 
 .login-form {
@@ -172,6 +212,32 @@ h2 {
 .login-form button:hover {
     background-color: #1e8e52;
 }
+
+.role-selection {
+    display: flex;            /* Display roles in a row */
+    flex-wrap: nowrap;         
+    gap: 0px;                 
+    justify-content: space-between; 
+}
+
+.role-selection button {
+    margin: 0;                
+    padding: 3px 16px;        /* Adjust padding*/
+}
+
+
+.role-selection div,
+.role-selection span {
+    margin-right: 5px;       
+}
+
+
+.role-selection button,
+.role-selection div,
+.role-selection span {
+    font-size: 12px;          /* Adjust font size */
+}
+
 .signup-message {
     color: #000000;  
     font-size: 1rem;  
@@ -199,6 +265,62 @@ h2 {
     margin-top: auto;
 }
 
+/*flash message container*/
+.flash-messages {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa; 
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 100%;
+    max-width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* For error messages (flash error) */
+.alert-error {
+    background-color: #f8d7da;
+    color: #861a25;
+    border-color: #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100%;             /* Full width within the form container */
+    max-width: 400px;        /* Ensure the width doesn't exceed 400px */
+    margin-left: 0;          /* Align left */
+    margin-right: auto;    /* Center horizontally */
+}
+
+/* For success messages (flash success) */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* For informational messages (flash info) */
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* For warning messages (flash warning) */
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
 
 
 
