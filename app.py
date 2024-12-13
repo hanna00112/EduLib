@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for, flash, ses
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import os
+import os, re
 from datetime import datetime
 import requests
 
@@ -137,7 +137,7 @@ def login():
                 if user_type == "admin" and any(role.name == "admin" for role in user.roles):
                     session['user_id'] = user.id
                     session['user_role'] = 'admin'
-                    return jsonify({"message": "Welcome Admin!", "redirect": url_for('add_book')}), 200
+                    return jsonify({"message": "Welcome Admin!", "redirect": url_for('Admin_home')}), 200
                 elif user_type == "non-admin" and any(role.name in user_roles for role in user.roles):
                     session['user_id'] = user.id
                     session['user_role'] = 'non-admin'
@@ -160,6 +160,103 @@ def home():
     books = Book.query.all()
     return render_template('non-admin/student-home.html', books=books)
 
+# to access the admin home page
+@app.route('/admin/home')
+def Admin_home():
+    books = Book.query.all()
+    return render_template('admin/admin-home.html', books=books)
+
+
+# INDEX Page -- login
+@app.route('/index')
+def main():
+    return render_template('index.html')
+
+@app.route('/api/roles', methods=['GET'])
+def get_roles():
+    roles = Role.query.all()  
+    return jsonify([role.name for role in roles])
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+          # Handle submission from user
+        if request.is_json:
+            data = request.json
+            # Get form data
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            email = data.get('email')
+            password = data.get('password')
+            roles = data.get('roles', [])
+        else:
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            roles = request.form.getlist('roles')
+        # Normalize roles to a list
+        if isinstance(roles, str):  # If it's a single role wrap it in a list
+            roles = [roles]
+
+        print("Received data:", roles)
+        # Validate input
+        if not first_name or not last_name or not email or not password or not roles:
+            flash('Please fill in all fields', 'error')
+            return redirect(url_for('register'))
+
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, email):
+            return jsonify({"error": "Invalid email format"}), 400
+        
+        #valid role combinations
+        valid_combinations = [
+            {"admin"},                    # Admin alone
+            {"admin", "faculty"},         # Admin and Faculty
+            {"faculty"},                  # Faculty alone
+            {"student"},                  # Student alone
+            {"student", "admin"}          # Student and Admin
+        ]
+
+        # Convert user input into a set for easy comparison
+        user_roles_set = set(roles)
+
+        # Check if the provided roles match one of the valid combinations
+        
+        if user_roles_set not in valid_combinations:
+           flash('Invalid role combination', 'error')
+           return redirect(url_for('register'))
+        # Check if the email already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('Email already registered', 'error')
+            return redirect(url_for('register'))
+
+        # Create new user and hash the password
+        new_user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+
+        )
+        new_user.set_password(password)  # Hash the password
+
+         # Add roles to the user
+        db_roles = Role.query.filter(Role.name.in_(roles)).all()
+        for role in db_roles:
+            new_user.roles.append(role)
+        
+
+        # Add to the database
+        db.session.add(new_user)
+        print("Committing to the database...")
+        db.session.commit()
+        print("Commit successful.")
+        flash('Registration successful! Please log in.', 'success')
+        return redirect(url_for('login'))
+
+    # If GET request, render the registration form
+    return render_template('signup.html')
 
 #@app.route('/nait')
 #def mohammed():
