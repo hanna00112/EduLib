@@ -60,6 +60,22 @@ main {
     font-weight: normal;
     color: #333;
 }
+.main-container h2 {
+    position: absolute;
+    top: 85px;
+    left: 120px;
+    font-size: 1.8rem;
+    font-weight: normal;
+    color: #333;
+}
+.register-line {
+    position: absolute;
+    top: 100px;
+    left: 5px;
+    font-size: 1.8rem;
+    font-weight: normal;
+    color: #333;
+}
 
 
 .content-wrapper {
@@ -97,7 +113,55 @@ main {
     flex-direction: column; 
     justify-content: center; 
 }
+.register-form {
+    width: 100%;  
+    max-width: 500px !important;  
+    background-color: rgba(255, 255, 255, 0.9);  
+    padding: 3rem !important;
+    border-radius: 8px;  
+    box-shadow: 0 4px 10px #E4F6EA(0, 0, 0, 0.1);  
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
 
+.register-form label{
+    display: block;
+    margin-bottom: 0.8rem; 
+    font-size: 1rem; 
+    color: #333; 
+}
+
+
+.register-form input,
+.register-form select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1.1px solid #307E54;
+    border-radius: 5px;
+    background-color: #E4F6EA;
+    font-size: 0.8rem;
+    margin-bottom: 1rem; 
+    margin-top: 0.3rem;
+}
+
+.register-form button {
+    background-color: #307E54;
+    color: white;
+    padding: 0.7rem;  
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 2rem; 
+}
+
+.login-form button:hover {
+    background-color: #1e8e52;
+}
 
 .login-form {
     width: 100%;  
@@ -148,6 +212,32 @@ h2 {
 .login-form button:hover {
     background-color: #1e8e52;
 }
+
+.role-selection {
+    display: flex;            /* Display roles in a row */
+    flex-wrap: nowrap;         
+    gap: 0px;                 
+    justify-content: space-between; 
+}
+
+.role-selection button {
+    margin: 0;                
+    padding: 3px 16px;        /* Adjust padding*/
+}
+
+
+.role-selection div,
+.role-selection span {
+    margin-right: 5px;       
+}
+
+
+.role-selection button,
+.role-selection div,
+.role-selection span {
+    font-size: 12px;          /* Adjust font size */
+}
+
 .signup-message {
     color: #000000;  
     font-size: 1rem;  
@@ -164,7 +254,7 @@ h2 {
     color: #3ed183;  
 }
 
-footer {
+.footer {
     width: 100%;
     position: fixed;
     bottom: 0; 
@@ -175,6 +265,62 @@ footer {
     margin-top: auto;
 }
 
+/*flash message container*/
+.flash-messages {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa; 
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 100%;
+    max-width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* For error messages (flash error) */
+.alert-error {
+    background-color: #f8d7da;
+    color: #861a25;
+    border-color: #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100%;             /* Full width within the form container */
+    max-width: 400px;        /* Ensure the width doesn't exceed 400px */
+    margin-left: 0;          /* Align left */
+    margin-right: auto;    /* Center horizontally */
+}
+
+/* For success messages (flash success) */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* For informational messages (flash info) */
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* For warning messages (flash warning) */
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
 
 
 
@@ -194,7 +340,7 @@ footer {
 
 .container {
     display: flex;
-    height: 100%;
+    min-height: 100vh;
 }
 .sidebar {
     width: 250px;
@@ -239,6 +385,31 @@ footer {
     background-color: #004d1a; /* AUI green */
     color: #ffffff; /* White text */
 }
+#admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent; /* Ensure no background color */
+    padding: 10px 0; /* Add some padding for spacing */
+    border-bottom: 1px solid #ccc; /* Optional: subtle separator */
+    margin-bottom: 20px; /* Add margin to separate it from the book grid */
+}
+
+#admin-header h1 {
+    font-family: 'Inknut Antiqua', serif;
+    font-size: 2rem;
+    color: #004d1a;
+    margin: 0; /* Remove default margin */
+}
+
+#admin-header .search-bar {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #307E54;
+    border-radius: 5px;
+    background-color: #fff; /* White background for contrast */
+    font-size: 1rem;
+}
 .search-books {
     margin-top: auto;
     display: flex;
@@ -259,35 +430,42 @@ footer {
 }
 /* Main Content */
 .main-content {
-    min-height: 100vh;
+    width: 100%;
     flex: 1;
     padding: 20px;
-    background-color: #004d1a; 
+    background-color: #f9f9f9;
     display: flex;
     flex-direction: column;
-    color: #ffffff
 }
-.main-content .header {
+
+.website-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0px;
+    background-color: transparent; /* Remove any background color */
+    padding: 10px 0; /* Add padding for spacing */
+    border-bottom: 1px solid #ccc; /* Optional: subtle separator */
 }
 
-.main-content .header h1 {
+.website-header h1 {
     font-size: 2rem;
-    margin-bottom: 20px;
-    font-weight: bold;
+    color: #004d1a;
+    margin: 0; /* Remove default margin */
 }
 
 .search-bar {
     padding: 10px;
     width: 300px;
-    border: 1px solid #ddd;
+    border: 1px solid #307E54;
     border-radius: 5px;
+    background-color: #E4F6EA;
+    font-size: 1rem;
 }
 /* Book Grid */
-
+.book-selection {
+    flex-grow: 1;
+    width: 100%;
+}
 .section-title {
     font-size: 1.5rem;
     font-weight: bold;
@@ -297,32 +475,32 @@ footer {
 .book-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    color: #004d1a;
-    margin-bottom: 40px;
+    gap: 20px; /* Add space between cards */
+    margin-top: 20px;
 }
 .book-card {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    align-items: center
 }
 
+/* Book Image Placeholder */
 .book-image {
-    width: 100%;
-    height: 200px;
+    height: 150px;
     background-color: #e6e6e6;
     border-radius: 5px;
     margin-bottom: 15px;
 }
  .book-details p {
     margin: 5px 0;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    color: #333;
   }
 
 /* CSS for ADMIN-HOME */
@@ -333,6 +511,9 @@ footer {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100px;
+    margin: 5px;
+    color: white;
 }
 
 .remove-button {
@@ -373,6 +554,7 @@ footer {
     gap: 15px; /* Add spacing between list items */
 }
 
+
 .footer-people li {
     display: inline; 
 }
@@ -386,5 +568,4 @@ footer {
 .footer-people a:hover {
     color: #cce5cc; /* Light green on hover */
 }
-
   
