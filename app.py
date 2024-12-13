@@ -89,5 +89,38 @@ def add_book():
     
     # Render the form page
     return render_template('admin/admin-add.html')
+
+# Route to Edit a Book
+@app.route('/admin/edit-book/<int:book_id>', methods=['GET', 'POST'])
+def edit_book(book_id):
+    # Ensure the user is logged in and is an admin
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('login'))
+
+    # Query the book from the database
+    book = Book.query.get_or_404(book_id)
+
+    if request.method == 'POST':
+        # Get the form data
+        book.title = request.form.get('title')
+        book.author = request.form.get('author')
+        book.isbn = request.form.get('isbn')
+        book.description = request.form.get('description')
+        book.location = request.form.get('location')
+        book.copy_status = request.form.get('copy_status')
+
+        # Validate the form inputs (you can add more validation as needed)
+        if not book.title or not book.author or not book.isbn:
+            flash("Title, Author, and ISBN are required.", "danger")
+            return redirect(url_for('edit_book', book_id=book.id))
+
+        # Commit the changes to the database
+        db.session.commit()
+        flash("Book details updated successfully!", "success")
+        return redirect(url_for('admin_dashboard'))  # Redirect to admin dashboard or another page
+
+    return render_template('admin/admin-edit.html', book=book)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
