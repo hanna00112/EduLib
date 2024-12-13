@@ -188,7 +188,7 @@ def add_book():
         db.session.add(new_book)
         db.session.commit()
         flash("Book added successfully!", "success")
-        return redirect(url_for('add_book'))
+        return redirect(url_for('Admin_home'))
     return render_template('admin/admin-add.html')
 #check
 
