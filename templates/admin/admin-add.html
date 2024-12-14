@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Book - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-add.css') }}">
 </head>
 <body>
+    <header>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='photos/auilogo.jpeg') }}" alt="EduLib Logo" />
+            </div>
+        <h1>EduLib</h1>
+        </header>
     <div class="container">
         <aside class="sidebar">
                 <div class="logo">
-                    <h1>EduLife</h1>
                 </div>
                 <nav class="menu">
                     <ul>
@@ -37,6 +44,7 @@
             {% endwith %}
 
         <section class="form-section">
+            <h1>Adding a Book to the Inventory</h1>
                 <form action="{{ url_for('add_book') }}" method="POST">
                         <div class="form-item">
                             <label for="title">Book Title</label>

@@ -5,7 +5,35 @@ body {
     padding: 0;
     background-color: #CBDDC9;
     color: #333;
+    height: 100%;
 }
+header h1 {
+    font-family: 'Inknut Antiqua', serif;
+    margin: 0;
+    color: #333;
+}
+
+header {
+    display: flex;
+    align-items: center;  
+    justify-content: flex-start;  
+    padding: 0.5rem;
+    background-color: #f1f1f1;
+}
+
+header .logo img {
+    height: 50px;  
+    border-radius: 2px;  
+    margin-right: 10px; 
+}
+
+header h1 {
+    margin: 0;  
+    color: #333;  
+    font-size: 1rem;  
+    font-weight: normal;
+}
+
 
 /* Sidebar Styling */
 .sidebar {
@@ -15,6 +43,7 @@ body {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     position: fixed;
     height: 100vh;
+    top: 70px;
 }
 
 .sidebar .logo h1 {
@@ -64,6 +93,7 @@ main {
     padding: 2rem;
 }
 
+
 /* Add Book Form Section */
 .form-section {
     background-color: #fff;
@@ -74,6 +104,7 @@ main {
     max-width: 600px;
     margin: auto; /* Center the form horizontally */
 }
+
 
 .form-section h1 {
     font-family: 'Inknut Antiqua', serif;
