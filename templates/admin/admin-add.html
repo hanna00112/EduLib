@@ -64,14 +64,24 @@
                                 <option value="available">Available</option>
                                 <option value="unavailable">Checked-out</option>
                             </select>
-                        </div>
+                            <div class="form-group">
+                                <label for="genres">Genres</label>
+                                <div>
+                                    {% for genre in genres %}
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" id="genre_{{ genre.id }}" name="genres[]" value="{{ genre.id }}">
+                                            <label for="genre_{{ genre.id }}">{{ genre.name }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         <button class="submit-btn" type="submit">Add Book</button>
                     </form>
                 </section>
             </main>
         </div>
 
-    <!-- Add your custom JavaScript here, if needed -->
+
    <!--  <script src="{{ url_for('static', filename='js/adminadd.js') }}"></script> -->
 </body>
 </html>

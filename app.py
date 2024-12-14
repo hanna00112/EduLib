@@ -1,10 +1,11 @@
+import sqlite3
 from flask import Flask, redirect, render_template, request, url_for, flash, session, jsonify
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os, re
 from datetime import datetime
-import requests
+
 
 
 # Initialize Flask app
@@ -13,6 +14,8 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 # Set secret key for sessions
 app.secret_key = os.urandom(24)  # You can replace this with a fixed key for production
 bcrypt = Bcrypt(app)
+
+
 
 # SQLite database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///edulife.db'
@@ -26,6 +29,7 @@ migrate = Migrate(app, db)
 
 # Define the Book model
 class Book(db.Model):
+    __tablename__ = 'book'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(255), nullable=False)
@@ -33,11 +37,21 @@ class Book(db.Model):
     isbn = db.Column(db.String(13), nullable=False)
     location = db.Column(db.String(255))
     copy_status = db.Column(db.String(50))
+    borrowed_by = db.Column(
+    db.Integer,
+    db.ForeignKey('user.id', name='fk_book_borrowed_by'),
+    nullable=True
+    )
+    returned = db.Column(db.Boolean, default=False)
+    checkout_date = db.Column(db.DateTime, nullable=True)
 
-    # Many-to-many relationship with Genre
+    borrowed_user = db.relationship('User', backref='borrowed_books', foreign_keys=[borrowed_by])
+
     genres = db.relationship('Genre', secondary='book_genre', back_populates='books')
+    
 
 class Genre(db.Model):
+    __tablename__ = 'genre'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
@@ -51,6 +65,7 @@ class BookGenre(db.Model):
 
 # Define the User model
 class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(20), nullable=False)
@@ -68,6 +83,7 @@ class User(db.Model):
 
 # Define the Role model
 class Role(db.Model):
+    __tablename__ = 'role'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
@@ -100,6 +116,25 @@ with app.app_context():
 def serialize_books(book):
     book['_id'] = str(book['_id'])  # Convert ObjectId to string
     return book
+
+
+def get_book_by_id(book_id):
+    book = Book.query.get(book_id)  # Fetch the book by ID
+    
+    if book:
+        genres = [genre.name for genre in book.genres]  # Extract genre names from the relationship
+
+        return {
+            "id": book.id,
+            "title": book.title,
+            "author": book.author,
+            "description": book.description,
+            "location": book.location,
+            "copy_status": book.copy_status,
+            "genres": genres,
+        }
+
+    return None
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -163,22 +198,26 @@ def home():
 
 @app.route('/admin/add-book', methods=['GET', 'POST'])
 def add_book():
-    # Ensure the user is logged in and is an admin
-    if 'user_role' not in session or session['user_role'] != 'admin':
-        flash("Access denied. Admins only.", "danger")
-        return redirect(url_for('login'))
+    genres = Genre.query.all() 
+
     if request.method == 'POST':
         # Get form data
+        selected_genres_ids = request.form.getlist('genres')
+        # Fetch the genre objects based on the selected ids
+        selected_genres = Genre.query.filter(Genre.id.in_(selected_genres_ids)).all()
+
         title = request.form.get('title')
         author = request.form.get('author')
         isbn = request.form.get('isbn')
         description = request.form.get('description')
         location = request.form.get('location')
         copy_status = request.form.get('copy_status')
+
         # Validate form inputs
         if not title or not author or not isbn:
             flash("Title, Author, and ISBN are required.", "danger")
             return redirect(url_for('add_book'))
+
         # Add the book to the database
         new_book = Book(
             title=title,
@@ -186,20 +225,27 @@ def add_book():
             isbn=isbn,
             description=description,
             location=location,
-            copy_status=copy_status
+            copy_status=copy_status,
+            genres=selected_genres  # directly assign the selected genres
         )
+
         db.session.add(new_book)
         db.session.commit()
         flash("Book added successfully!", "success")
         return redirect(url_for('Admin_home'))
-    return render_template('admin/admin-add.html')
-#check
+    
+    return render_template('admin/admin-add.html', genres=genres)
+
 
 # to access the admin home page
-@app.route('/admin/home')
+@app.route('/admin/home', methods=['GET','POST'])
 def Admin_home():
-    books = Book.query.all()
-    return render_template('admin/admin-home.html', books=books)
+    query = request.args.get('search', '')
+    if query:
+        books = search_books(query)  # Call the search_books function
+    else:
+        books = Book.query.all()  # If no search query, show all books
+    return render_template('admin/admin-home.html', books=books, query=query)
 
 
 # INDEX Page -- login
@@ -293,11 +339,117 @@ def register():
     # If GET request, render the registration form
     return render_template('signup.html')
 
-#@app.route('/nait')
-#def mohammed():
-   # return render_template('admin/admin-add.html')
+@app.route('/borrow/<int:book_id>', methods=['POST'])
+def borrow_book(book_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("You need to be logged in to borrow a book.", "danger")
+        return redirect(url_for('login'))
 
+    user = User.query.get(user_id)
+    book = Book.query.get(book_id)
 
+    if not book:
+        flash("Book not found.", "danger")
+        return redirect(url_for('home'))
+
+    # Check if the book is already borrowed
+    if book.borrowed_by:
+        flash(f"The book '{book.title}' is already borrowed.", "danger")
+        return redirect(url_for('home'))
+
+    # Borrow the book by updating the `borrowed_by` field in the `Book` model
+    book.borrowed_by = user.id
+    db.session.commit()
+
+    # Create an entry in `BookCheckoutHistory` to record the borrowing
+    checkout_history = BookCheckoutHistory(
+        book_id=book.id,
+        user_id=user.id,
+        checkout_date=datetime.utcnow(),
+        late_fine=0  # Set late fine to 0 initially
+    )
+    db.session.add(checkout_history)
+    db.session.commit()
+
+    flash(f"You have successfully borrowed '{book.title}'.", "success")
+    return redirect(url_for('home'))
+
+@app.route('/return_book/<int:book_id>', methods=['POST'])
+def return_book(book_id):
+  
+    pass
+
+@app.route('/remove_book/<int:book_id>', methods=['POST'])
+def remove_book(book_id):
+    # Logic to remove the book using book_id
+    # Example:
+    book = Book.query.get(book_id)
+    if book:
+        db.session.delete(book)
+        db.session.commit()
+    return redirect(url_for('Admin_home'))
+
+@app.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
+def edit_book(book_id):
+    book = Book.query.get(book_id)  # Get the book object
+    if not book:
+        return "Book not found", 404
+
+    # Fetch all available genres from the database
+    genres = Genre.query.all()
+
+    # Get the IDs of the genres associated with the book for pre-selection
+    book_genres = [genre.id for genre in book.genres]
+
+    if request.method == 'POST':
+        # Update the book data from the form
+        book.title = request.form['title']
+        book.author = request.form['author']
+        book.isbn = request.form['isbn']
+        book.description = request.form['description']
+        book.location = request.form['location']
+        book.copy_status = request.form['copy_status']
+
+        # Get selected genres from the form
+        selected_genres = request.form.getlist('genres')
+
+        # Update genres for the book (clear existing and add selected genres)
+        book.genres.clear()  # This clears the existing relationships
+
+        # Append new genres based on the selected ones
+        for genre_id in selected_genres:
+            genre = Genre.query.get(genre_id)
+            if genre:
+                book.genres.append(genre)
+
+        db.session.commit()  # Commit changes to the database
+        flash("Book details updated successfully.", "success")
+        return redirect(url_for('Admin_home'))  # Redirect to the admin home
+
+    # Return the template with the necessary data
+    return render_template('admin/admin-edit.html', book=book, genres=genres, book_genres=book_genres)
+
+@app.route('/my-borrowed-books', methods=['GET'])
+def my_borrowed_books():
+    if 'user_id' not in session:
+        # User is not logged in
+        flash("Please log in to view your borrowed books.", "danger")
+        return redirect(url_for('login'))
+
+    try:
+        # Get the logged-in user's ID from the session
+        user_id = session['user_id']
+
+        # Query books borrowed by the user
+        borrowed_books = Book.query.filter_by(borrowed_by=user_id).all()
+
+        # Render the borrowed books page and pass the books data to the template
+        return render_template('non-admin/student-history.html', books=borrowed_books)
+
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}", "danger")
+        return redirect(url_for('home'))
 
 
 #////////////////////////////////////////////////////////////////////////////////////
@@ -307,10 +459,8 @@ def search_books(query):
     Search for books in the database based on title, author, or ISBN
     """
     try:
-        # Convert query to lowercase for case-insensitive search
-        query = query.lower()
+        query = query.lower()  # Convert query to lowercase for case-insensitive search
         
-        # Search in database using SQLAlchemy
         books = Book.query.filter(
             db.or_(
                 db.func.lower(Book.title).contains(query),
@@ -318,117 +468,23 @@ def search_books(query):
                 Book.isbn.contains(query)
             )
         ).all()
-        
+
         # Format results
         results = []
         for book in books:
             results.append({
+                'id': book.id,  # Add the 'id' attribute to each book's dictionary
                 'title': book.title,
                 'author': book.author,
                 'isbn': book.isbn,
                 'status': book.copy_status,
-                'location': book.location
+                'location': book.location,
+                'genres': [genre.name for genre in book.genres]  # Ensure genres are in list format
             })
-        
+
         return results
     except Exception as e:
         return f"Error searching books: {str(e)}"
-
-def gpt4all_response(conversation_history):
-    """
-    Send a request to GPT4All API and return the response.
-    """
-    API_URL = "http://localhost:4891/v1/chat/completions"
-    payload = {
-        "messages": conversation_history,
-        "model": "gpt4all-j",
-        "temperature": 0.7,
-        "max_tokens": 2000  # Adjust based on your needs
-    }
-    
-    try:
-        # Make the API request
-        response = requests.post(API_URL, json=payload)
-        if response.status_code == 200:
-            # Return the chatbot's response
-            return response.json()['choices'][0]['message']['content']
-        else:
-            return f"API Error: {response.status_code} - {response.text}"
-    except requests.exceptions.ConnectionError:
-        return "Error: Could not connect to GPT4All API"
-
-
-#/////////////////////////////////////////////////////////////////////////////////////
-
-
-
-@app.route('/chatbot', methods=['POST'])
-
-def chat_with_library_assistant():
-    """
-    Handle chatbot requests from JavaScript frontend
-    """
-    try:
-        # Get the message from the JSON request
-        data = request.get_json()
-        user_input = data.get('message', '').strip()
-
-        # System prompt for the assistant
-        system_prompt = {
-            "role": "system", 
-            "content": """You are a helpful library management assistant, you have to act as your own library, do not referr the user to any other external resource other than Al akhawayn university library, if someone asks for a book look up if it is in Al Akhawayn university library, You can help with:
-            - Book searches and recommendations
-            - Library membership information
-            - Check-out and return procedures
-            - Library policies and rules
-            - Finding resources by category or subject
-            - Library hours and services
-            - Study room reservations
-            - Library events and programs
-            Please provide clear, accurate information about library services and resources."""
-        }
-
-        # Initialize conversation history
-        conversation_history = [system_prompt]
-
-        # Check if it's a book search query
-        if any(keyword in user_input.lower() for keyword in ['find book', 'search book', 'looking for book']):
-            # Extract search query
-            search_terms = user_input.lower().replace('find book', '').replace('search book', '').replace('looking for book', '').strip()
-            
-            # Search for books
-            results = search_books(search_terms)
-            
-            if isinstance(results, list) and results:
-                response = "I found the following books:\n"
-                for book in results:
-                    response += f"\nTitle: {book['title']}\n"
-                    response += f"Author: {book['author']}\n"
-                    response += f"ISBN: {book['isbn']}\n"
-                    response += f"Status: {book['status']}\n"
-                    response += f"Location: {book['location']}\n"
-                    response += "-" * 40 + "\n"
-            elif isinstance(results, list):
-                response = "I couldn't find any books matching your search criteria."
-            else:
-                response = results  # This would be the error message
-        else:
-            # Use GPT4All for non-database-related queries
-            conversation_history.append({"role": "user", "content": user_input})
-            response = gpt4all_response(conversation_history)
-
-        return jsonify({
-            "response": response,
-            "status": "success"
-        })
-
-    except Exception as e:
-        return jsonify({
-            "response": f"An error occurred: {str(e)}",
-            "status": "error"
-        }), 500
-
-#/////////////////////////////////////////////////////////////////////////////////////
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

@@ -12,6 +12,19 @@
 </head>
 
 <body>
+    <body>
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
     <header>
             <div class="logo">
                 <img src="{{ url_for('static', filename='photos/auilogo.jpeg') }}" alt="EduLib Logo" />
@@ -28,7 +41,7 @@
                 <ul>
                     <li><a href="{{ url_for('home') }}">Home</a></li>
                     <li><a href="#">Wishlist</a></li>
-                    <li><a href="#">History</a></li>
+                    <li><a href="{{ url_for('my_borrowed_books') }}">History</a></li>
                     <li><a href="#">Settings</a></li>
                 </ul>
             </nav>
@@ -50,88 +63,33 @@
         <section class="book-selection">
             <h2 class="section-title">Trending</h2>
             <div class="book-grid">
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> John Doe</p>
-                        <p><strong>ISBN:</strong> 123456789</p>
-                        <p><strong>Description:</strong> This is a short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
+                 <section class="book-selection">
+                    <h2 class="section-title">Trending</h2>
+                    <div class="book-grid">
+                        {% for book in books %}
+                        <div class="book-card">
+                            <img src="#" alt="Book Cover" class="book-image">
+                            <div class="book-details">
+                                <h3>{{ book.title }}</h3>
+                                <p><strong>Author:</strong> {{ book.author }}</p>
+                                {% if book.borrowed_by %}
+                                <p><strong>Status:</strong> Unavailable </p>
+                                <form action="{{ url_for('borrow_book', book_id=book.id) }}" method="POST">
+                                    <button class="btn btn-primary" type="submit">Borrow Book</button>
+                                </form>
+                                {% else %}
+                                <p><strong>Status:</strong> Available</p>
+                                <form action="{{ url_for('borrow_book', book_id=book.id) }}" method="POST">
+                                    <button class="btn btn-success" type="submit">Borrow Book</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                </div>
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> Jane Smith</p>
-                        <p><strong>ISBN:</strong> 987654321</p>
-                        <p><strong>Description:</strong> Another short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
-                    </div>
-                </div>
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> John Doe</p>
-                        <p><strong>ISBN:</strong> 123456789</p>
-                        <p><strong>Description:</strong> This is a short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
-                    </div>
-                </div>
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> John Doe</p>
-                        <p><strong>ISBN:</strong> 123456789</p>
-                        <p><strong>Description:</strong> This is a short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
-                    </div>
-                </div>
-                </div>
-        <div class="book-grid">
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> John Doe</p>
-                        <p><strong>ISBN:</strong> 123456789</p>
-                        <p><strong>Description:</strong> This is a short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
-                    </div>
-                </div>
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> Jane Smith</p>
-                        <p><strong>ISBN:</strong> 987654321</p>
-                        <p><strong>Description:</strong> Another short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
-                    </div>
-                </div>
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> John Doe</p>
-                        <p><strong>ISBN:</strong> 123456789</p>
-                        <p><strong>Description:</strong> This is a short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
-                    </div>
-                </div>
-                <div class="book-card">
-                    <img src="#" alt="Book Cover" class="book-image">
-                    <div class="book-details">
-                        <h3>Book Title</h3>
-                        <p><strong>Author:</strong> John Doe</p>
-                        <p><strong>ISBN:</strong> 123456789</p>
-                        <p><strong>Description:</strong> This is a short description of the book.</p>
-                        <button class="submit-btn" type="submit">Borrow Book</button>
-                    </div>
-                </div>
+                </section>
+                
+               
             </div>
         </div>
     </section>
