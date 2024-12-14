@@ -1,71 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History of Checked-Out Books</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <title>My Borrowed Books</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
+
 <body>
-    <div class="page-layout">
+
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='photos/auilogo.jpeg') }}" alt="EduLib Logo" />
+        </div>
+        <h1>EduLib</h1>
+    </header>
+
+    <div class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="/static/assets/images/logo.png" alt="EduLib Logo" class="logo">
-                <h2>EduLib</h2>
+            <div class="logo">
+                <h1>EduLife</h1>
             </div>
-            <nav>
-                <ul class="menu">
-                    <li><a href="/home">Home</a></li>
-                    <li><a href="/my-borrowed-books">History</a></li>
-                    <li><a href="/wishlist">Wishlist</a></li>
-                    <li><a href="/settings">Settings</a></li>
+            <nav class="menu">
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="#">Wishlist</a></li>
+                    <li><a href="{{ url_for('my_borrowed_books') }}">History</a></li>
+                    <li><a href="#">Settings</a></li>
                 </ul>
             </nav>
-            <div class="actions">
-                <h3>Chat Bot</h3>
-            </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="content">
-            <header>
-                <input type="text" class="search-bar" placeholder="Search for a book...">
-                <div class="user-info">
-                    <img src="/static/assets/images/user-icon.png" alt="User Icon" class="user-icon">
-                    <span>Student</span>
-                </div>
+        <main class="main-content">
+            <header id="admin-header" class="website-header">
+                <h1>My Borrowed Books</h1>
+                <form action="{{ url_for('search_books_route') }}" method="GET">
+                    <input type="search" name="query" placeholder="Search for books..." class="search-bar" value="{{ request.args.get('query', '') }}">
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+                
             </header>
 
-            <section class="history">
-                <h1>History Of Checked-Out Books</h1>
-                <div class="book-history">
-                    {% if books %}
-                        {% for book in books %}
-                        <div class="book-card">
-                            <div class="book-image">
-                                <img src="/static/assets/images/book-placeholder.png" alt="Book Cover">
-                            </div>
-                            <div class="book-details">
-                                <h2>{{ book.title }}</h2>
-                                <p><strong>Author:</strong> {{ book.author }}</p>
-                                <p><strong>Status:</strong> {{ "Returned" if book.returned else "Not Yet" }}</p>
-                                <p><strong>Checkout Date:</strong> {{ book.checkout_date.strftime('%d/%m/%Y') }}</p>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p>You have not checked out any books.</p>
-                    {% endif %}
-                </div>
+            <section class="borrowed-books">
+                {% if borrowed_books %}
+                    <table class="book-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Borrowed Date</th>
+                                <th>Return Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book, history in borrowed_books %}
+                                <tr>
+                                    <td>{{ book.title }}</td>
+                                    <td>{{ book.author }}</td>
+                                    <td>{{ history.checkout_date.strftime('%Y-%m-%d') if history.checkout_date else 'N/A' }}</td>
+                                    <td>{{ 'Returned' if book.returned else 'Borrowed' }}</td>
+                                    <td>
+                                        {% if not book.returned %}
+                                            <form action="{{ url_for('return_book', book_id=book.id) }}" method="POST">
+                                                <button type="submit" class="btn btn-primary">Return</button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>
+                {% else %}
+                    <p>You have not borrowed any books.</p>
+                {% endif %}
             </section>
         </main>
-
-        <!-- Footer -->
-        <footer>
-            <p>About | Contact | Privacy Policy | Terms & Conditions</p>
-            <p>&copy; 2024 All rights reserved</p>
-        </footer>
     </div>
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <footer class="footer">
+        <p> 2024 All Rights Reserved</p>
+        <ul class="footer-people">
+            <li><a href="#">Hanna Abrahem</a></li>
+            <li><a href="#">Aya Merhraoui</a></li>
+            <li><a href="#">Aya Nait Mbarek</a></li>
+            <li><a href="#">Hadil Chafik</a></li>
+            <li><a href="#">Haitham Fajri</a></li>
+            <li><a href="#">Rim Cherqi</a></li>
+        </ul>
+    </footer>
+
+    <script src="../script.js"></script>
 </body>
+
 </html>

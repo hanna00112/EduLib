@@ -12,7 +12,7 @@ from datetime import datetime
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 # Set secret key for sessions
-app.secret_key = os.urandom(24)  # You can replace this with a fixed key for production
+app.secret_key = os.urandom(24)  
 bcrypt = Bcrypt(app)
 
 
@@ -42,8 +42,9 @@ class Book(db.Model):
     db.ForeignKey('user.id', name='fk_book_borrowed_by'),
     nullable=True
     )
+    
     returned = db.Column(db.Boolean, default=False)
-    checkout_date = db.Column(db.DateTime, nullable=True)
+    
 
     borrowed_user = db.relationship('User', backref='borrowed_books', foreign_keys=[borrowed_by])
 
@@ -377,8 +378,34 @@ def borrow_book(book_id):
 
 @app.route('/return_book/<int:book_id>', methods=['POST'])
 def return_book(book_id):
-  
-    pass
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("You need to be logged in to return a book.", "danger")
+        return redirect(url_for('login'))
+
+    book = Book.query.get(book_id)
+    if not book:
+        flash("Book not found.", "danger")
+        return redirect(url_for('my_borrowed_books'))
+
+    if book.borrowed_by != user_id:
+        flash("You cannot return a book you haven't borrowed.", "danger")
+        return redirect(url_for('my_borrowed_books'))
+
+    # Update the book's borrowed_by field and returned flag
+    book.borrowed_by = None
+    book.returned = True
+    db.session.commit()
+
+    # Update the BookCheckoutHistory entry with the return date
+    checkout_history = BookCheckoutHistory.query.filter_by(book_id=book.id, user_id=user_id, return_date=None).first()
+    if checkout_history:
+        checkout_history.return_date = datetime.utcnow()
+        db.session.commit()
+
+    flash(f"You have successfully returned '{book.title}'.", "success")
+    return redirect(url_for('my_borrowed_books'))
+
 
 @app.route('/remove_book/<int:book_id>', methods=['POST'])
 def remove_book(book_id):
@@ -441,11 +468,17 @@ def my_borrowed_books():
         # Get the logged-in user's ID from the session
         user_id = session['user_id']
 
-        # Query books borrowed by the user
-        borrowed_books = Book.query.filter_by(borrowed_by=user_id).all()
+        # Query borrowed books and their checkout history
+        borrowed_books = (
+            db.session.query(Book, BookCheckoutHistory)
+            .join(BookCheckoutHistory, Book.id == BookCheckoutHistory.book_id)
+            .filter(BookCheckoutHistory.user_id == user_id)  # Filter based on user_id in BookCheckoutHistory
+            .order_by(BookCheckoutHistory.checkout_date.desc())
+            .all()
+        )
 
         # Render the borrowed books page and pass the books data to the template
-        return render_template('non-admin/student-history.html', books=borrowed_books)
+        return render_template('non-admin/student-history.html', borrowed_books=borrowed_books)
 
     except Exception as e:
         flash(f"An error occurred: {str(e)}", "danger")
@@ -485,6 +518,16 @@ def search_books(query):
         return results
     except Exception as e:
         return f"Error searching books: {str(e)}"
+
+@app.route('/search', methods=['GET'])
+def search_books_route():
+    query = request.args.get('query', '')
+    if query:
+        results = search_books(query)  
+    else:
+        results = []
+
+    return render_template('non-admin/student-home.html', books=results)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

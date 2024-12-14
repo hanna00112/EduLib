@@ -1,4 +1,5 @@
-   <!-- Make a Comment -->
+<!-- Make a Comment -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,45 +55,44 @@
         </aside>
 
     <!-- Main Content-->
-    <main class="main-content">
-        <header id="admin-header" class="website-header">
-            <h1>Home Page</h1>
-            <input types="search" placeholder="Search for books..." class="search-bar">
-        </header>
-        <!-- Trending Section/Book Grid -->
-        <section class="book-selection">
-            <h2 class="section-title">Trending</h2>
-            <div class="book-grid">
-                 <section class="book-selection">
-                    <h2 class="section-title">Trending</h2>
-                    <div class="book-grid">
-                        {% for book in books %}
-                        <div class="book-card">
-                            <img src="#" alt="Book Cover" class="book-image">
-                            <div class="book-details">
-                                <h3>{{ book.title }}</h3>
-                                <p><strong>Author:</strong> {{ book.author }}</p>
-                                {% if book.borrowed_by %}
-                                <p><strong>Status:</strong> Unavailable </p>
-                                <form action="{{ url_for('borrow_book', book_id=book.id) }}" method="POST">
-                                    <button class="btn btn-primary" type="submit">Borrow Book</button>
-                                </form>
-                                {% else %}
-                                <p><strong>Status:</strong> Available</p>
-                                <form action="{{ url_for('borrow_book', book_id=book.id) }}" method="POST">
-                                    <button class="btn btn-success" type="submit">Borrow Book</button>
-                                </form>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </section>
-                
-               
+    <!-- Main Content -->
+<main class="main-content">
+    <header id="admin-header" class="website-header">
+        <h1>Home Page</h1>
+        <!-- Search Form -->
+        <form action="{{ url_for('search_books_route') }}" method="GET">
+            <input type="search" name="query" placeholder="Search for books..." class="search-bar" value="{{ request.args.get('query', '') }}">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+    </header>
+    <!-- Trending Section/Book Grid -->
+    <section class="book-selection">
+        <h2 class="section-title">Trending</h2>
+        <div class="book-grid">
+            {% for book in books %}
+            <div class="book-card">
+                <img src="#" alt="Book Cover" class="book-image">
+                <div class="book-details">
+                    <h3>{{ book.title }}</h3>
+                    <p><strong>Author:</strong> {{ book.author }}</p>
+                    {% if book.borrowed_by %}
+                    <p><strong>Status:</strong> Unavailable </p>
+                    <form action="{{ url_for('borrow_book', book_id=book.id) }}" method="POST">
+                        <button class="btn btn-primary" type="submit">Borrow Book</button>
+                    </form>
+                    {% else %}
+                    <p><strong>Status:</strong> Available</p>
+                    <form action="{{ url_for('borrow_book', book_id=book.id) }}" method="POST">
+                        <button class="btn btn-success" type="submit">Borrow Book</button>
+                    </form>
+                    {% endif %}
+                </div>
             </div>
+            {% endfor %}
         </div>
     </section>
+</main>
+
 
     <footer class="footer">
             <p> 2024 All Rights Reserved</p>
