@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os, re
+
 from datetime import datetime
 
 
@@ -528,6 +529,134 @@ def search_books_route():
         results = []
 
     return render_template('non-admin/student-home.html', books=results)
+#////////////////////////////////////////////////////////////////////////////////////
+# For the bot in order to work, the hosting computet should gpt4all installed as well as one of llama 3 models :3
+def search_books(query):
+    """
+    Search for books in the database based on title, author, or ISBN
+    """
+    try:
+        # Convert query to lowercase for case-insensitive search
+        query = query.lower()
+        
+        # Search in database using SQLAlchemy
+        books = Book.query.filter(
+            db.or_(
+                db.func.lower(Book.title).contains(query),
+                db.func.lower(Book.author).contains(query),
+                Book.isbn.contains(query)
+            )
+        ).all()
+        
+        # Format results
+        results = []
+        for book in books:
+            results.append({
+                'title': book.title,
+                'author': book.author,
+                'isbn': book.isbn,
+                'status': book.copy_status,
+                'location': book.location
+            })
+        
+        return results
+    except Exception as e:
+        return f"Error searching books: {str(e)}"
 
+def gpt4all_response(conversation_history):
+    """
+    Send a request to GPT4All API and return the response.
+    """
+    API_URL = "http://localhost:4891/v1/chat/completions"
+    payload = {
+        "messages": conversation_history,
+        "model": "gpt4all-j",
+        "temperature": 0.7,
+        "max_tokens": 2000  # Adjust based on your needs
+    }
+    
+    try:
+        # Make the API request
+        response = requests.post(API_URL, json=payload)
+        if response.status_code == 200:
+            # Return the chatbot's response
+            return response.json()['choices'][0]['message']['content']
+        else:
+            return f"API Error: {response.status_code} - {response.text}"
+    except requests.exceptions.ConnectionError:
+        return "Error: Could not connect to GPT4All API"
+
+
+#/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+@app.route('/chatbot', methods=['POST'])
+
+def chat_with_library_assistant():
+    """
+    Handle chatbot requests from JavaScript frontend
+    """
+    try:
+        # Get the message from the JSON request
+        data = request.get_json()
+        user_input = data.get('message', '').strip()
+
+        # System prompt for the assistant
+        system_prompt = {
+            "role": "system", 
+            "content": """You are a helpful library management assistant, you have to act as your own library, do not referr the user to any other external resource other than Al akhawayn university library, if someone asks for a book look up if it is in Al Akhawayn university library, You can help with:
+            - Book searches and recommendations
+            - Library membership information
+            - Check-out and return procedures
+            - Library policies and rules
+            - Finding resources by category or subject
+            - Library hours and services
+            - Study room reservations
+            - Library events and programs
+            Please provide clear, accurate information about library services and resources."""
+        }
+
+        # Initialize conversation history
+        conversation_history = [system_prompt]
+
+        # Check if it's a book search query
+        if any(keyword in user_input.lower() for keyword in ['find book', 'search book', 'looking for book']):
+            # Extract search query
+            search_terms = user_input.lower().replace('find book', '').replace('search book', '').replace('looking for book', '').strip()
+            
+            # Search for books
+            results = search_books(search_terms)
+            
+            if isinstance(results, list) and results:
+                response = "I found the following books:\n"
+                for book in results:
+                    response += f"\nTitle: {book['title']}\n"
+                    response += f"Author: {book['author']}\n"
+                    response += f"ISBN: {book['isbn']}\n"
+                    response += f"Status: {book['status']}\n"
+                    response += f"Location: {book['location']}\n"
+                    response += "-" * 40 + "\n"
+            elif isinstance(results, list):
+                response = "I couldn't find any books matching your search criteria."
+            else:
+                response = results  # This would be the error message
+        else:
+            # Use GPT4All for non-database-related queries
+            conversation_history.append({"role": "user", "content": user_input})
+            response = gpt4all_response(conversation_history)
+
+        return jsonify({
+            "response": response,
+            "status": "success"
+        })
+
+    except Exception as e:
+        return jsonify({
+            "response": f"An error occurred: {str(e)}",
+            "status": "error"
+        }), 500
+
+#/////////////////////////////////////////////////////////////////////////////////////
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

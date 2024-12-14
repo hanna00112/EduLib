@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -106,7 +107,54 @@
             </ul>
     
         </footer>
+        <!-- bot -->
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="chat-title">
+            <i class="fas fa-book-reader"></i>
+            Library Assistant
+        </div>
+        <div class="chat-controls">
+            <button id="clearChat" title="Clear Chat">
+                <i class="fas fa-trash"></i>
+            </button>
+            <button id="toggleChat" title="Minimize">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot-message">
+            <div class="avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+                Hello! I'm your library assistant. How can I help you today?
+            </div>
+            <div class="message-time">Just now</div>
+        </div>
+    </div>
 
+    <div class="chat-input-container">
+        <div class="input-wrapper">
+            <textarea id="userInput" placeholder="Type your message..." rows="1"></textarea>
+            <button id="sendMessage">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        <div class="suggestion-chips">
+            <button class="chip">Find a book</button>
+            <button class="chip">Library hours</button>
+            <button class="chip">Study rooms</button>
+        </div>
+    </div>
+</div>
+
+<button class="chat-toggle-button" id="toggleChatButton">
+    <i class="fas fa-comments"></i>
+</button>
+<script src="{{ url_for('static', filename='js/botscript.js') }}"></script>
 <script src="../script.js"></script>
 </body>
 </html>
