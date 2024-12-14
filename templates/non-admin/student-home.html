@@ -15,6 +15,7 @@
     <header>
             <div class="logo">
                 <img src="{{ url_for('static', filename='photos/auilogo.jpeg') }}" alt="EduLib Logo" />
+            <!-- <h1>Home Page</h1> -->
             </div>
             <h1>EduLib</h1>
         </header>
@@ -22,7 +23,6 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <h1>EduLife</h1>
             </div>
             <nav class="menu">
                 <ul>
@@ -42,10 +42,10 @@
 
     <!-- Main Content-->
     <main class="main-content">
-        <header id="admin-header" class="website-header">
-            <h1>Home Page</h1>
+        <div id="admin-header">
+         <h1>Home Page</h1> 
             <input types="search" placeholder="Search for books..." class="search-bar">
-        </header>
+        </div>
         <!-- Trending Section/Book Grid -->
         <section class="book-selection">
             <h2 class="section-title">Trending</h2>
@@ -90,8 +90,6 @@
                         <button class="submit-btn" type="submit">Borrow Book</button>
                     </div>
                 </div>
-                </div>
-        <div class="book-grid">
                 <div class="book-card">
                     <img src="#" alt="Book Cover" class="book-image">
                     <div class="book-details">

@@ -396,12 +396,12 @@ h2 {
 }
 #admin-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: transparent; /* Ensure no background color */
-    padding: 10px 0; /* Add some padding for spacing */
-    border-bottom: 1px solid #ccc; /* Optional: subtle separator */
-    margin-bottom: 20px; /* Add margin to separate it from the book grid */
+    justify-content: space-between; /* Aligns items to opposite ends */
+    align-items: center;            /* Vertically centers the content */
+    background-color: transparent;  /* Ensure no background color */
+    padding: 10px 20px;             /* Add padding for spacing */
+    margin-bottom: 20px;            /* Add margin to separate it from other content */
+    width: 100%;                    /* Ensure it spans the full width */
 }
 
 #admin-header h1 {
@@ -409,6 +409,7 @@ h2 {
     font-size: 2rem;
     color: #004d1a;
     margin: 0; /* Remove default margin */
+    flex-shrink: 0;  /* Prevent the h1 from shrinking */
 }
 
 #admin-header .search-bar {
