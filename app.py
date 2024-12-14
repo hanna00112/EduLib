@@ -191,13 +191,12 @@ def login():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-
 @app.route('/myaccount')
 def home():
     books = Book.query.all()
     return render_template('non-admin/student-home.html', books=books)
 
-
+#For Admin to add Book to The Database
 @app.route('/admin/add-book', methods=['GET', 'POST'])
 def add_book():
     genres = Genre.query.all() 
@@ -410,8 +409,7 @@ def return_book(book_id):
 
 @app.route('/remove_book/<int:book_id>', methods=['POST'])
 def remove_book(book_id):
-    # Logic to remove the book using book_id
-    # Example:
+
     book = Book.query.get(book_id)
     if book:
         db.session.delete(book)
@@ -529,39 +527,6 @@ def search_books_route():
         results = []
 
     return render_template('non-admin/student-home.html', books=results)
-#////////////////////////////////////////////////////////////////////////////////////
-# For the bot in order to work, the hosting computet should gpt4all installed as well as one of llama 3 models :3
-def search_books(query):
-    """
-    Search for books in the database based on title, author, or ISBN
-    """
-    try:
-        # Convert query to lowercase for case-insensitive search
-        query = query.lower()
-        
-        # Search in database using SQLAlchemy
-        books = Book.query.filter(
-            db.or_(
-                db.func.lower(Book.title).contains(query),
-                db.func.lower(Book.author).contains(query),
-                Book.isbn.contains(query)
-            )
-        ).all()
-        
-        # Format results
-        results = []
-        for book in books:
-            results.append({
-                'title': book.title,
-                'author': book.author,
-                'isbn': book.isbn,
-                'status': book.copy_status,
-                'location': book.location
-            })
-        
-        return results
-    except Exception as e:
-        return f"Error searching books: {str(e)}"
 
 def gpt4all_response(conversation_history):
     """
